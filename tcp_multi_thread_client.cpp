@@ -2,6 +2,7 @@
 #include <cstring>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <thread>
 
 void client_task() {
     int sock = 0;
@@ -9,8 +10,10 @@ void client_task() {
     const char *hello = "Hello from client";
     char buffer[1024] = {0};
 
+    std::thread::id this_id = std::this_thread::get_id();
+
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        std::cerr << "Socket creation error" << std::endl;
+        std::cerr << "Thread " << this_id << ": Socket creation error" << std::endl;
         return;
     }
 
@@ -18,19 +21,19 @@ void client_task() {
     serv_addr.sin_port = htons(8081);
 
     if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
-        std::cerr << "Invalid address/Address not supported" << std::endl;
+        std::cerr << "Thread " << this_id << ": Invalid address/Address not supported" << std::endl;
         return;
     }
 
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-        std::cerr << "Connection Failed" << std::endl;
+        std::cerr << "Thread " << this_id << ": Connection Failed" << std::endl;
         return;
     }
 
     send(sock, hello, strlen(hello), 0);
-    std::cout << "Hello message sent" << std::endl;
+    std::cout << "Thread " << this_id << ": Hello message sent" << std::endl;
     read(sock, buffer, 1024);
-    std::cout << "Message received: " << buffer << std::endl;
+    std::cout << "Thread " << this_id << ": Message received: " << buffer << std::endl;
 
     close(sock);
 }

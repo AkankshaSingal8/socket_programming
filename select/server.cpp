@@ -87,9 +87,7 @@ int main() {
                 exit(EXIT_FAILURE);
             }
 
-            std::cout << "New connection, socket fd is " << new_socket
-                      << ", IP is " << inet_ntoa(address.sin_addr)
-                      << ", port: " << ntohs(address.sin_port) << std::endl;
+            std::cout << "New connection, socket fd is " << new_socket << std::endl;
 
             // Add new socket to the client_sockets array
             for (int i = 0; i < MAX_CLIENTS; i++) {
